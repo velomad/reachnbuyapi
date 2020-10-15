@@ -10,14 +10,21 @@ module.exports = {
 		// });
 
 		const page = parseInt(req.query.page);
-		const limit = parseInt(req.query.limit);
-
+		const limit =
+			parseInt(req.query.limit) > 50 ? 50 : parseInt(req.query.limit);
 		const startIndex = (page - 1) * limit;
 		const endIndex = page * limit;
+		console.log("endIndex", endIndex);
+
+		let dataLen = await dynamicSchema(req.query.item).countDocuments();
+		console.log("dataLen", dataLen);
+		
 
 		const results = {};
 
-		if (endIndex < dynamicSchema.length) {
+		// console.log(endIndex,"==============", dynamicSchema);
+
+		if (endIndex < dataLen) {
 			results.next = {
 				page: page + 1,
 				limit: limit,
