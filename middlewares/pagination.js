@@ -1,4 +1,7 @@
-const paginate = (data) => {
+const { MongoClient } = require("mongodb");
+const mongoose = require("mongoose");
+
+const paginate = (model) => {
 	return async (req, res, next) => {
 		const page = parseInt(req.query.page);
 		const limit = parseInt(req.query.limit);
@@ -8,7 +11,7 @@ const paginate = (data) => {
 
 		const results = {};
 
-		if (endIndex < data.length) {
+		if (endIndex < model.length) {
 			results.next = {
 				page: page + 1,
 				limit: limit,
@@ -19,14 +22,14 @@ const paginate = (data) => {
 				page: page - 1,
 				limit: limit,
 			};
-		}
-		try {
-			results.results = await data.find().limit(limit).skip(startIndex).exec();
-			res.paginated = results;
-			next();
-		} catch (e) {
-			console.error(e);
-		}
+        }
+        try{
+            results.results = await model.find().limit(limit).skip(startIndex).exec()
+            res.paginated = results
+            next()
+        }catch(e) {
+            console.error(e)
+        }
 	};
 };
 

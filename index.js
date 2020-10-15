@@ -1,5 +1,6 @@
 const express = require("express");
 const {MongoClient} = require("mongodb");
+const mongoose = require("mongoose");
 const cors = require("cors");
 const logger = require("morgan");
 const dotenv = require("dotenv");
@@ -13,11 +14,11 @@ const app = express();
 
 // Connect to MongoDB
 // connectDB();
-MongoClient.connect(process.env.MONGODB_LOCAL_URI, {
+mongoose.connect(process.env.MONGODB_LOCAL_URI, {
 	useUnifiedTopology: true,
 	useNewUrlParser: true,
 }).then(() => {
-	console.log("connected")
+	console.log("connected to db")
 })
 
 // Middlewares & configs setup
