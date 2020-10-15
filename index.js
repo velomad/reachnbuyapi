@@ -1,29 +1,40 @@
-const express = require("express")
+const express = require("express");
+const {MongoClient} = require("mongodb");
 const cors = require("cors");
+const logger = require("morgan");
+const dotenv = require("dotenv");
+const expressStatusMonitor = require("express-status-monitor");
+const connectDB = require("./config/db");
+
+require("dotenv").config();
+
+// Init express server
 const app = express();
-const path = require("path")
-const bodyParser = require("body-parser");
-const {MongoClient}= require("mongodb");
-const port = process.env.PORT || 5000;
 
-const db = require("./config/keys").mongoURI
+// Connect to MongoDB
+// connectDB();
+MongoClient.connect(process.env.MONGODB_LOCAL_URI, {
+	useUnifiedTopology: true,
+	useNewUrlParser: true,
+}).then(() => {
+	console.log("connected")
+})
 
-// parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-// parse application/json
-app.use(bodyParser.json());
-// Middlewares
+// Middlewares & configs setup
+app.use(logger("dev"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.disable("x-powered-by");
+app.use(expressStatusMonitor());
 app.use(cors());
 
-app.use("/api/v1/myntra/topwear", require("./routes/myntra/topwear"))
-app.use("/api/v1/myntra/", require("./routes/categories/category"))
+// api routes
+app.use("/api/v1/myntra", require("./routes/myntra"));
 
-MongoClient.connect(db, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
-        console.log("MongoDB successfully connected")
-    }).catch(err => {
-        console.log(err)
-    })
+const port = process.env.PORT || 5000;
+const address = process.env.SERVER_ADDRESS || "localhost";
 
 app.listen(port, () => {
-    console.log(`Server Running at ${port}`)
-})
+	console.log(`Server running on http://${address}:${port}`);
+});
