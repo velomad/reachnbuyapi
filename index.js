@@ -1,10 +1,8 @@
 const express = require("express");
-const { MongoClient } = require("mongodb");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const logger = require("morgan");
 const dotenv = require("dotenv");
-const expressStatusMonitor = require("express-status-monitor");
 const connectDB = require("./config/db");
 
 require("dotenv").config();
@@ -13,15 +11,7 @@ require("dotenv").config();
 const app = express();
 
 // Connect to MongoDB
-// connectDB();
-mongoose
-	.connect(process.env.MONGODB_LOCAL_URI, {
-		useUnifiedTopology: true,
-		useNewUrlParser: true,
-	})
-	.then(() => {
-		console.log("connected to db");
-	});
+connectDB();
 
 // Middlewares & configs setup
 app.use(logger("dev"));
