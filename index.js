@@ -1,5 +1,5 @@
 const express = require("express");
-const {MongoClient} = require("mongodb");
+const { MongoClient } = require("mongodb");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const logger = require("morgan");
@@ -14,12 +14,14 @@ const app = express();
 
 // Connect to MongoDB
 // connectDB();
-mongoose.connect(process.env.MONGODB_LOCAL_URI, {
-	useUnifiedTopology: true,
-	useNewUrlParser: true,
-}).then(() => {
-	console.log("connected to db")
-})
+mongoose
+	.connect(process.env.MONGODB_LOCAL_URI, {
+		useUnifiedTopology: true,
+		useNewUrlParser: true,
+	})
+	.then(() => {
+		console.log("connected to db");
+	});
 
 // Middlewares & configs setup
 app.use(logger("dev"));
@@ -32,6 +34,7 @@ app.use(cors());
 
 // api routes
 app.use("/api/v1/myntra", require("./routes/myntra"));
+app.use("/api/v1/product", require("./routes/autocomplete"));
 
 const port = process.env.PORT || 5000;
 const address = process.env.SERVER_ADDRESS || "localhost";

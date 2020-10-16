@@ -1,14 +1,7 @@
-const { MongoClient } = require("mongodb");
-const mongoose = require("mongoose");
 const dynamicSchema = require("../models/myntra");
 
 module.exports = {
 	getTopWear: async (req, res) => {
-		// const client = new MongoClient(process.env.MONGODB_LOCAL_URI, {
-		// 	useUnifiedTopology: true,
-		// 	useNewUrlParser: true,
-		// });
-
 		const page = parseInt(req.query.page);
 		const limit =
 			parseInt(req.query.limit) > 50 ? 50 : parseInt(req.query.limit);
@@ -16,15 +9,11 @@ module.exports = {
 		const endIndex = page * limit;
 		console.log("endIndex", endIndex);
 
-		let dataLen = await dynamicSchema(req.query.item).countDocuments();
-		console.log("dataLen", dataLen);
-		
+		let documentLength = await dynamicSchema(req.query.item).countDocuments();
 
 		const results = {};
 
-		// console.log(endIndex,"==============", dynamicSchema);
-
-		if (endIndex < dataLen) {
+		if (endIndex < documentLength) {
 			results.next = {
 				page: page + 1,
 				limit: limit,
@@ -52,8 +41,6 @@ module.exports = {
 			});
 			console.log(results);
 			console.log(results.results.length);
-
-			// await client.close();
 		} catch (e) {
 			console.error(e);
 		}
