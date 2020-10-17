@@ -1,6 +1,4 @@
 const { MongoClient } = require("mongodb");
-const { connection } = require("mongoose");
-const { Collection } = require("mongoose");
 const URI = process.env.MONGODB_LOCAL_URI;
 
 module.exports = {
@@ -12,7 +10,7 @@ module.exports = {
 
 		try {
 			await client.connect();
-			const database = client.db("autocomplete");
+			const database = client.db("webscrape");
 			const collection = database.collection("products");
 			// let result = collection.find().toArray()
 

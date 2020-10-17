@@ -1,5 +1,4 @@
 const { MongoClient } = require("mongodb");
-
 const connectDB = async () => {
 	MongoClient.connect(process.env.MONGODB_LOCAL_URI, {
 		useUnifiedTopology: true,
