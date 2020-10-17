@@ -30,7 +30,7 @@ module.exports = {
 										},
 										autocomplete: {
 											query: `${req.query.term}`,
-											path: "productName",
+											path: "category",
 											fuzzy: {
 												maxEdits: 1,
 											},

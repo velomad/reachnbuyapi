@@ -22,8 +22,8 @@ app.disable("x-powered-by");
 app.use(cors());
 
 // api routes
-app.use("/api/v1/myntra", require("./routes/myntra"));
-app.use("/api/v1/product", require("./routes/autocomplete"));
+app.use("/api/v1/products", require("./routes/product"));
+app.use("/api/v1/products", require("./routes/autocomplete"));
 
 const port = process.env.PORT || 5000;
 const address = process.env.SERVER_ADDRESS || "localhost";
