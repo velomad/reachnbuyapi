@@ -1,8 +1,6 @@
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
 const logger = require("morgan");
-const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 
 require("dotenv").config();
