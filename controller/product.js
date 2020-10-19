@@ -23,7 +23,7 @@ module.exports = {
 			const endIndex = page * limit;
 
 			let documentLength = await collection.countDocuments({
-				website: "ajio",
+				website: website,
 				category: item,
 			});
 
