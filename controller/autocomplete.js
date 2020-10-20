@@ -3,7 +3,7 @@ const URI = process.env.MONGODB_LOCAL_URI;
 
 module.exports = {
 	autocomplete: async (req, res) => {
-		const client = new MongoClient(URI, {
+		const client = new MongoClient(process.env.MONGODB_LOCAL_URI, {
 			useUnifiedTopology: true,
 			useNewUrlParser: true,
 		});
@@ -11,32 +11,19 @@ module.exports = {
 		try {
 			await client.connect();
 			const database = client.db("webscrape");
-			const collection = database.collection("products");
-			// let result = collection.find().toArray()
+			// const collection = database.collection("products");
+			const collection = database.collection("category");
 
 			let result = await collection
 				.aggregate([
 					{
 						$search: {
-							compound: {
-								should: [
-									{
-										autocomplete: {
-											query: `${req.query.term}`,
-											path: "brandName",
-											fuzzy: {
-												maxEdits: 1,
-											},
-										},
-										autocomplete: {
-											query: `${req.query.term}`,
-											path: "category",
-											fuzzy: {
-												maxEdits: 1,
-											},
-										},
-									},
-								],
+							autocomplete: {
+								query: `${req.query.term}`,
+								path: "category",
+								fuzzy: {
+									maxEdits: 2,
+								},
 							},
 						},
 					},
@@ -54,5 +41,6 @@ module.exports = {
 				message: e.message,
 			});
 		}
+		await client.close();
 	},
 };

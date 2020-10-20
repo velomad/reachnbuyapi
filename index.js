@@ -21,9 +21,9 @@ app.use(cors());
 
 // api routes
 app.use("/api/v1/products", require("./routes/product"));
-app.use("/api/v1/products", require("./routes/autocomplete"));
+app.use("/api/v1", require("./routes/autocomplete"));
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8080;
 const address = process.env.SERVER_ADDRESS || "localhost";
 
 app.listen(port, () => {

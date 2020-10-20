@@ -47,7 +47,7 @@ module.exports = {
 					website: website,
 					category: item,
 				})
-				.limit(limit)
+					.limit(limit)
 				.skip(startIndex)
 				.toArray();
 
