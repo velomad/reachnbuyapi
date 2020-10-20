@@ -22,7 +22,7 @@ module.exports = {
 								query: `${req.query.term}`,
 								path: "category",
 								fuzzy: {
-									maxEdits: 2,
+									maxEdits: 1,
 								},
 							},
 						},
