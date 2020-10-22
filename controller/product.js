@@ -15,7 +15,7 @@ module.exports = {
 			const collection = database.collection("products");
 
 			const website = req.params.website;
-			const item = req.query.item;
+			const item = req.query.category;
 			const page = parseInt(req.query.page);
 			const limit =
 				parseInt(req.query.limit) > 50 ? 50 : parseInt(req.query.limit);
@@ -42,6 +42,12 @@ module.exports = {
 				};
 			}
 
+			if(!item){
+				return res.status(404).json({
+					message : "missing query param category"
+				})
+			}
+
 			results.result = await collection
 				.find({
 					website: website,
@@ -52,7 +58,7 @@ module.exports = {
 				.toArray();
 
 			res.status(200).json({
-				requestedURL: item,
+				category: item,
 				totalProducts: documentLength,
 				totalPages: Math.ceil(documentLength / limit),
 				maxLimit: 50,

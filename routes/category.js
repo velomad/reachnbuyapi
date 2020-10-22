@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const myntraController = require("../controller/product");
+const categoryController = require("../controller/category");
 const { auth } = require("../middlewares/apikeyAuth");
 
-router.get("/:website",auth, myntraController.getTopWear);
+router.get("/",auth,  categoryController.getCategories);
 
 module.exports = router;
