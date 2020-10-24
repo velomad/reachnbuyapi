@@ -1,4 +1,5 @@
 const { MongoClient } = require("mongodb");
+const { endianness } = require("os");
 const URI = process.env.MONGODB_LOCAL_URI;
 
 module.exports = {
@@ -14,33 +15,14 @@ module.exports = {
 			const database = client.db("webscrape");
 			const collection = database.collection("products");
 
-			const item = req.query.term.replace(/\s/g, "-");
+			const item = req.query.term
 
 			const page = parseInt(req.query.page);
 			const limit = parseInt(req.query.limit);
 			const startIndex = (page - 1) * limit;
 			const endIndex = page * limit;
 
-			// let documentLength = await collection.countDocuments({
-			// 	category: item.toLowerCase(),
-			// });
-
-			const results = {};
-
-			if (endIndex < 1000) {
-				results.next = {
-					page: page + 1,
-					limit: limit,
-				};
-			}
-			if (startIndex > 0) {
-				results.previous = {
-					page: page - 1,
-					limit: limit,
-				};
-			}
-
-			results.result = await collection
+			let data = await collection
 				.aggregate([
 					{
 						$search: {
@@ -54,19 +36,37 @@ module.exports = {
 						},
 					},
 					{
-						$limit: 1000,
+						$project:{
+							_id : 0
+						}
+					},	
+					{
+						$limit: 500,
 					},
 				])
-				.skip(startIndex)
-				.limit(limit)
 				.toArray();
+
+			const results = {};
+
+			if (endIndex < data.length) {
+				results.next = {
+					page: page + 1,
+					limit: limit,
+				};
+			}
+			if (startIndex > 0) {
+				results.previous = {
+					page: page - 1,
+					limit: limit,
+				};
+			}
+
+			results.result = data.slice(startIndex, endIndex);
 
 			res.status(200).json({
 				requestedURL: item,
-				totalProducts: 1000,
-				totalProducts: results.result.length,
-				totalPages: Math.ceil(1000 / limit),
-				totalPages: Math.ceil(results.result.length / limit),
+				totalProducts: data.length,
+				totalPages: Math.ceil(data.length / limit),
 				maxLimit: 50,
 				message: results.result.length < 1 ? "not found" : item,
 				results: results.result.length,

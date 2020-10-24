@@ -29,10 +29,15 @@ module.exports = {
 				])
 				.toArray();
 
+			var test = [];
+			result.map((el) => {
+				test.push(el.category);
+			});
+
 			res.json({
 				"search term": req.query.term,
 				results: result.length,
-				data: result,
+				suggestions: test,
 			});
 		} catch (e) {
 			console.error(e);
