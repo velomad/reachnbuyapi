@@ -42,18 +42,21 @@ module.exports = {
 				};
 			}
 
-			if(!item){
+			if (!item) {
 				return res.status(404).json({
-					message : "missing query param category"
-				})
+					message: "missing query param category",
+				});
 			}
 
 			results.result = await collection
-				.find({
-					website: website,
-					category: item,
-				})
-					.limit(limit)
+				.find(
+					{
+						website: website,
+						category: item,
+					},
+					{ projection: { _id: 0 } },
+				)
+				.limit(limit)
 				.skip(startIndex)
 				.toArray();
 
