@@ -61,7 +61,14 @@ module.exports = {
 				};
 			}
 
+
 			results.result = data.slice(startIndex, endIndex);
+
+			if (!limit) {
+				return res.status(404).json({
+					message: "missing query param limit",
+				});
+			}
 
 			res.status(200).json({
 				requestedURL: item,
