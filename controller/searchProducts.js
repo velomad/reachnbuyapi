@@ -15,7 +15,7 @@ module.exports = {
 			const database = client.db("webscrape");
 			const collection = database.collection("products");
 
-			const item = req.query.term
+			const item = req.query.term;
 
 			const page = parseInt(req.query.page);
 			const limit = parseInt(req.query.limit);
@@ -36,14 +36,15 @@ module.exports = {
 						},
 					},
 					{
-						$project:{
-							_id : 0
-						}
-					},	
+						$project: {
+							_id: 0,
+						},
+					},
 					{
-						$limit: 500,
+						$limit: 1000,
 					},
 				])
+				.sort({ productName: 1 })
 				.toArray();
 
 			const results = {};
@@ -61,7 +62,6 @@ module.exports = {
 				};
 			}
 
-
 			results.result = data.slice(startIndex, endIndex);
 
 			if (!limit) {
@@ -71,11 +71,11 @@ module.exports = {
 			}
 
 			res.status(200).json({
-				requestedURL: item,
+				"search term": item,
 				totalProducts: data.length,
 				totalPages: Math.ceil(data.length / limit),
 				maxLimit: 50,
-				message: results.result.length < 1 ? "not found" : item,
+				message: results.result.length < 1 ? "not found" : "Results found",
 				results: results.result.length,
 				data: results,
 			});
