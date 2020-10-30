@@ -21,6 +21,7 @@ app.use(cors());
 
 // api routes
 app.use("/api/v1/products", require("./routes/product"));
+app.use("/api/v1/product", require("./routes/singleProduct"));
 app.use("/api/v1/search", require("./routes/autocomplete"));
 app.use("/api/v1/items", require("./routes/searchProducts"));
 app.use("/api/v1/categories", require("./routes/category"));
