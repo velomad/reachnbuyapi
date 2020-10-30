@@ -44,7 +44,7 @@ module.exports = {
 						$limit: 1000,
 					},
 				])
-				.sort({ productName: 1 })
+				// .sort({ productName: 1 })
 				.toArray();
 
 			const results = {};
