@@ -1,5 +1,4 @@
 const { MongoClient } = require("mongodb");
-const { endianness } = require("os");
 const URI = process.env.MONGODB_LOCAL_URI;
 
 module.exports = {
@@ -33,11 +32,6 @@ module.exports = {
 									maxEdits: 1,
 								},
 							},
-						},
-					},
-					{
-						$project: {
-							_id: 0,
 						},
 					},
 					{

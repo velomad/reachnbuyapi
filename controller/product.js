@@ -49,13 +49,10 @@ module.exports = {
 			}
 
 			results.result = await collection
-				.find(
-					{
-						website: website,
-						category: item,
-					},
-					{ projection: { _id: 0 } },
-				)
+				.find({
+					website: website,
+					category: item,
+				})
 				.limit(limit)
 				.skip(startIndex)
 				.toArray();
