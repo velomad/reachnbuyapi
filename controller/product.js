@@ -53,6 +53,15 @@ module.exports = {
 					website: website,
 					category: item,
 				})
+				.sort(
+					req.query.sort === "discount"
+						? { discountPercent: -1 }
+						: req.query.sort === "high"
+						? { productPrice: -1 }
+						: req.query.sort === "low"
+						? { productPrice: 1 }
+						: null,
+				)
 				.limit(limit)
 				.skip(startIndex)
 				.toArray();

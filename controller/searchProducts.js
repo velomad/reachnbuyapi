@@ -37,8 +37,9 @@ module.exports = {
 					{
 						$limit: 1000,
 					},
+					// { $sample: { size: 1 } },
 				])
-				// .sort({ productName: 1 })
+				// .sort({ productPrice: 1 })
 				.toArray();
 
 			const results = {};
