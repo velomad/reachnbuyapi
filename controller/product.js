@@ -12,7 +12,7 @@ module.exports = {
 		try {
 			await client.connect();
 
-			const database = client.db("webscrapebackup");
+			const database = client.db("webscrape");
 			const collection = database.collection("products");
 
 			const page = parseInt(req.query.page);
@@ -24,7 +24,7 @@ module.exports = {
 			console.log(req.query);
 
 			const queryObj = { ...req.query };
-			const excludedFields = ["page", "sort", "limit", "fields"]; 
+			const excludedFields = ["page", "sort", "limit", "fields"];
 			excludedFields.forEach((el) => delete queryObj[el]);
 
 			// 2.advance filtering
@@ -33,9 +33,6 @@ module.exports = {
 				/\b(gte|gt|lte|lt)\b/g,
 				(match) => `$${match}`,
 			);
-
-
-				
 
 			let query = collection
 				.find(JSON.parse(queryStr))
@@ -46,6 +43,8 @@ module.exports = {
 						? { productPrice: -1 }
 						: req.query.sort === "low"
 						? { productPrice: 1 }
+						: req.query.sort === "rating"
+						? { productRating: -1 }
 						: null,
 				)
 				.limit(limit)
@@ -54,16 +53,14 @@ module.exports = {
 
 			// execute query
 
-			// queryStr.replace(/\b(gte|gt|lte|lt)\b/g,(match) => `$${match}`)
-			
-			var enteredQuery = JSON.stringify(queryObj)
-			var replacedQuery = JSON.parse(enteredQuery.replace(/\b(gte|gt|lte|lt)\b/g,(match) => `$${match}`))
+			let enteredQuery = JSON.stringify(queryObj);
+			const replacedQuery = JSON.parse(
+				enteredQuery.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`),
+			);
 			const results = {};
 			let documentLength = await collection.countDocuments(replacedQuery);
 
 			results.result = await query;
-
-			
 
 			if (endIndex < documentLength) {
 				results.next = {
@@ -78,62 +75,20 @@ module.exports = {
 				};
 			}
 
-			// if (!item) {
-			// 	return res.status(404).json({
-			// 		message: "missing query param category",
-			// 	});
-			// }
-
-			// const query = (results.result = await collection
-			// 	.find({
-			// 		website: website,
-			// 		category: item,
-			// 		// discountPercent: {  $gte:  1 === 1 ? 70 : 0   }  ,
-			// 	})
-			// 	.filter({
-			// 		discountPercent: { $gte: 75 },
-			// 	})
-			// 	.sort(
-			// 		req.query.sort === "discount"
-			// 			? { discountPercent: -1 }
-			// 			: req.query.sort === "high"
-			// 			? { productPrice: -1 }
-			// 			: req.query.sort === "low"
-			// 			? { productPrice: 1 }
-			// 			: null,
-			// 	)
-			// 	.limit(limit)
-			// 	.skip(startIndex)
-			// 	.toArray());
-
-
-			console.log("querystrijng", JSON.parse(queryStr));
-			console.log("query",query);
-			console.log("queryobj",queryObj);
-
 			res.status(200).json({
 				category: req.query.category,
 				totalProducts: documentLength,
 				totalPages: Math.ceil(documentLength / limit),
 				maxLimit: 50,
-				// message: result.length < 1 ? "not found" : null,
 				results: results.result.length,
-				data:  results ,
+				data: results,
 			});
-			// console.log(results);
-			// console.log(results.result.length);
 		} catch (e) {
 			console.error(e);
 		}
 		await client.close();
 	},
 };
-
-
-
-
-
-
 
 // { website: 'ajio', gender: 'men', discountPercent: { $gte: '10' } }
 // { website: 'ajio', gender: 'men', discountPercent: { '$gte': '10' } }
