@@ -21,26 +21,57 @@ module.exports = {
 			const startIndex = (page - 1) * limit;
 			const endIndex = page * limit;
 
-			let data = await collection
-				.aggregate([
-					{
-						$search: {
-							autocomplete: {
-								query: `${req.query.term}`,
-								path: "displayCategory",
-								fuzzy: {
-									maxEdits: 1,
-								},
+			let aggregatedQueries = [
+				{
+					$search: {
+						autocomplete: {
+							query: `${req.query.term}`,
+							path: "displayCategory",
+							fuzzy: {
+								maxEdits: 1,
 							},
 						},
 					},
-					{
-						$limit: 1000,
-					},
-					// { $sample: { size: 1 } },
-				])
-				// .sort({ productPrice: 1 })
-				.toArray();
+				},
+			];
+
+			const queryObj = { ...req.query };
+			const excludedFields = [
+				"page",
+				"sort",
+				"limit",
+				"fields",
+				"api_key",
+				"term",
+			];
+			excludedFields.forEach((el) => delete queryObj[el]);
+
+			let enteredQuery = JSON.stringify(queryObj);
+			const replacedQuery = JSON.parse(
+				enteredQuery.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`),
+			);
+
+			console.log(JSON.stringify(Object.keys(replacedQuery)).slice(1, -1));
+
+			if (
+				!aggregatedQueries.includes(
+					JSON.stringify(Object.keys(replacedQuery)).slice(1, -1),
+				)
+			) {
+				aggregatedQueries.push({ $match: replacedQuery });
+			}
+
+			if (req.query.sort === "discount") {
+				aggregatedQueries.push({ $sort: { discountPercent: -1 } });
+			} else if (req.query.sort === "high") {
+				aggregatedQueries.push({ $sort: { productPrice: -1 } });
+			} else if (req.query.sort === "low") {
+				aggregatedQueries.push({ $sort: { productPrice: 1 } });
+			} else if (req.query.sort === "rating") {
+				aggregatedQueries.push({ $sort: { productRating: -1 } });
+			}
+
+			let data = await collection.aggregate(aggregatedQueries).toArray();
 
 			const results = {};
 
@@ -59,11 +90,6 @@ module.exports = {
 
 			results.result = data.slice(startIndex, endIndex);
 
-			if (!limit) {
-				return res.status(404).json({
-					message: "missing query param limit",
-				});
-			}
 
 			res.status(200).json({
 				"search term": item,
@@ -74,7 +100,7 @@ module.exports = {
 				results: results.result.length,
 				data: results,
 			});
-			console.log("result", results);
+			// console.log("result", results);
 		} catch (e) {
 			console.error(e);
 		}

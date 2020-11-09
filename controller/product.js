@@ -57,7 +57,10 @@ module.exports = {
 			const replacedQuery = JSON.parse(
 				enteredQuery.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`),
 			);
+			
 			const results = {};
+
+			console.log(replacedQuery)
 			let documentLength = await collection.countDocuments(replacedQuery);
 
 			results.result = await query;
