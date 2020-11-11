@@ -71,7 +71,11 @@ module.exports = {
 				aggregatedQueries.push({ $sort: { productRating: -1 } });
 			}
 
-			let data = await collection.aggregate(aggregatedQueries).toArray();
+			let data = await collection
+				.aggregate(aggregatedQueries, {
+					collation: { locale: "en_US", numericOrdering: true },
+				})
+				.toArray();
 
 			const results = {};
 
@@ -89,7 +93,6 @@ module.exports = {
 			}
 
 			results.result = data.slice(startIndex, endIndex);
-
 
 			res.status(200).json({
 				"search term": item,
