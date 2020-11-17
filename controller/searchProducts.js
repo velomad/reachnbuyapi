@@ -27,6 +27,9 @@ module.exports = {
 						autocomplete: {
 							query: `${req.query.term}`,
 							path: "displayCategory",
+							fuzzy: {
+								maxEdits: 1,
+							},
 						},
 					},
 				},

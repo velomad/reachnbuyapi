@@ -33,15 +33,14 @@ module.exports = {
 				/\b(gte|gt|lte|lt)\b/g,
 				(match) => `$${match}`,
 			);
-			
+
 			// queryStr = queryStr.replace(
 			// 	/\b(1|2|5|6)\b/g,
 			// 	(match) => `${Number(match)}`,
 			// );
 
-
-			console.log("unnnpareddd querystring=============>",queryStr)
-			console.log(JSON.parse(queryStr))
+			console.log("unnnpareddd querystring=============>", queryStr);
+			console.log(JSON.parse(queryStr));
 
 			let query = collection
 				.find(JSON.parse(queryStr))
@@ -55,7 +54,8 @@ module.exports = {
 						: req.query.sort === "rating"
 						? { productRating: -1 }
 						: null,
-				).collation({locale:"en_US", numericOrdering:true})
+				)
+				.collation({ locale: "en_US", numericOrdering: true })
 				.limit(limit)
 				.skip(startIndex)
 				.toArray();
