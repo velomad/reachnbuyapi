@@ -6,6 +6,9 @@ module.exports = {
 		const client = new MongoClient(URI, {
 			useUnifiedTopology: true,
 			useNewUrlParser: true,
+			maxPoolSize: 30,
+			keepAlive: 0,
+			tls: true,
 		});
 
 		try {
@@ -23,7 +26,8 @@ module.exports = {
 			res.status(500).json({
 				message: e.message,
 			});
+		} finally {
+			await client.close();
 		}
-		await client.close();
 	},
 };

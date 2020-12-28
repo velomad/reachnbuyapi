@@ -1,0 +1,37 @@
+{
+  "mappings": {
+    "dynamic": false,
+    "fields": {
+      "displayCategory": [
+        {
+          "type": "autocomplete",
+          "tokenization": "edgeGram",
+          "minGrams": 19,
+          "maxGrams": 14,
+          "foldDiacritics": false
+        }
+      ]
+    }
+  }
+}
+
+
+
+
+{
+  "mappings": {
+    "dynamic": false,
+    "fields": {
+      "displayCategory": {
+        "analyzer": "lucene.standard",
+        "multi": {
+          "keywordAnalyzer": {
+            "analyzer": "lucene.keyword",
+            "type": "string"
+          }
+        },
+        "type": "string"
+      }
+    }
+  }
+}
