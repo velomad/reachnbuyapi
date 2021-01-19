@@ -3,19 +3,8 @@ const URI = process.env.MONGODB_LOCAL_URI;
 
 module.exports = {
 	autocomplete: async (req, res) => {
-		const client = new MongoClient(URI, {
-			useUnifiedTopology: true,
-			useNewUrlParser: true,
-			maxPoolSize: 30,
-			keepAlive: 0,
-			tls: true,
-		});
-
 		try {
-			await client.connect();
-			const database = client.db("webscrape");
-			const collection = database.collection("autocomplete");
-
+			const collection = req.app.locals.db.db.collection('autocomplete');
 			let result = await collection
 				.aggregate([
 					{
@@ -48,7 +37,7 @@ module.exports = {
 				message: e.message,
 			});
 		} finally {
-			await client.close();
+			
 		}
 	},
 };

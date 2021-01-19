@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const logger = require("morgan");
 const connectDB = require("./config/db");
-
+const MongoClient = require('mongodb').MongoClient;
 require("dotenv").config();
 
 // Init express server
@@ -29,6 +29,23 @@ app.use("/api/v1/categories", require("./routes/category"));
 const port = process.env.PORT || 8080;
 const address = process.env.SERVER_ADDRESS || "localhost";
 
-app.listen(port, () => {
-	console.log(`Server running on http://${address}:${port}`);
+// app.listen(port, () => {
+// 	console.log(`Server running on http://${address}:${port}`);
+// });
+
+let db;
+let dbClient;
+
+MongoClient.connect(process.env.MONGODB_LOCAL_URI, { useNewUrlParser: true, useUnifiedTopology: true, poolSize: 1 })
+	.then(client => {
+		db = client.db('webscrape');
+		const products_collection = db.collection('products');
+		app.locals.products_collection = products_collection;
+		dbClient = client;
+		app.listen(port, () => console.info(`REST API running on port ${port}`));
+	}).catch(error => console.error(error));
+
+process.on('SIGINT', () => {
+	dbClient.close();
+	process.exit();
 });
