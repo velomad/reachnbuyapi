@@ -4,20 +4,10 @@ const URI = process.env.MONGODB_LOCAL_URI;
 
 module.exports = {
 	getTopWear: async (req, res) => {
-		const client = new MongoClient(URI, {
-			useUnifiedTopology: true,
-			useNewUrlParser: true,
-			maxPoolSize: 30,
-			keepAlive: 0,
-			tls: true,
-		});
-
 		try {
-			await client.connect();
-
-			const database = client.db("webscrape");
-			const collection = database.collection("products");
-
+			// console.log('req.app.locals.db',req.app.locals.db);
+			const collection = req.app.locals.products_collection;
+			// const collection = req.app.locals.db.db.collection('products');
 			const page = parseInt(req.query.page);
 			const limit =
 				parseInt(req.query.limit) > 50 ? 50 : parseInt(req.query.limit);
@@ -102,7 +92,6 @@ module.exports = {
 			console.error(e);
 		}
 		finally{
-			await client.close();
 		}
 	},
 };
